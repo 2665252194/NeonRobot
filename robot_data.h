@@ -21,6 +21,11 @@ extern int O_x;
 extern int O_y;
 extern int max_x;
 extern int max_y;
+extern int min_x;
+extern int min_y;
+extern int tmp_max_x;
+
+
 
 
 extern int inside_width;
@@ -38,5 +43,7 @@ extern int obs_y;
 extern int robot_start_x;
 extern int robot_start_y;
 extern int robot_start_orientation;
+
+extern float distance_count;
 
 #endif

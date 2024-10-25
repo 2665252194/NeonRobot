@@ -64,6 +64,11 @@ int robot_start_x;
 int robot_start_y;
 int robot_start_orientation;
 
+float distance_count;
+
+int min_x;
+int min_y;
+int tmp_max_x;
 
 
 
@@ -82,6 +87,11 @@ void initialize_arena_dimensions() {
     inside_height = arena_height - unit_size * 2;
     max_x = ((arena_width - 2*unit_size) / unit_size) - 1;//Remember taking 0 into account so minus 1
     max_y = ((arena_height - 2*unit_size) / unit_size) - 1;
+    tmp_max_x = max_x;
+    
+    min_x = 0;
+    min_y = 0;
+
 
 
 
@@ -102,5 +112,5 @@ void initialize_arena_dimensions() {
         //If some of them overlapped then do it again
     } while ((marker_x == obs_x && marker_y ==obs_y) || (marker_x == robot_start_x && marker_y == robot_start_y) || (robot_start_x == obs_x && robot_start_y ==obs_y));
 
-
+    distance_count = 0;
 }

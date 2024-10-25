@@ -22,6 +22,10 @@ struct robot
     int carry;//Check whether the robot is carrying marker
     int stop;
     int mark;
+    int Memory_System;
+    int clash_time;
+    int is_obstacle;
+
 };
 
 
@@ -154,8 +158,8 @@ void drpoMarker(struct robot *a)
     {
         a->carry = 0;
         draw_item(int_x, int_y, 3);
-        //forward(a);
-        //a->stop = 1;
+        forward(a);
+        a->stop = 1;
     }
     
 }
@@ -172,15 +176,16 @@ int canMoveForward(struct robot *a)
     if(a->orientation == 1)//North
     {
         //First case, it is a wall!
-        if(a->robot_y - 0 < 0.1)
+        if(a->robot_y - min_y < 0.1)
         {
-            a->robot_y = 0;//Reset the coordinate to integer value
+            a->robot_y = min_y;//Reset the coordinate to integer value
             return -1;
         }
         //Second case, it is a obstacle!
         else if (unit_array[int_y][int_x] == -1)//Remeber swapping x and y because it is rom and column for 2D array!!
         {
             a->robot_y = int_y + 1;
+            a->is_obstacle = 1;
             return -1;
         }
     }else if(a->orientation == 2)//East
@@ -196,6 +201,7 @@ int canMoveForward(struct robot *a)
         {
             a->robot_x = int_x;
             //printf("%d\n %f\n %f\n", a->orientation,a->robot_x,a->robot_y);
+            a->is_obstacle = 1;
             return -1;
         }
     }else if(a->orientation == 3)
@@ -208,18 +214,20 @@ int canMoveForward(struct robot *a)
         else if (unit_array[int_y+1][int_x] == -1)
         {
             a->robot_y = int_y;
+            a->is_obstacle = 1;
             return -1;
         }   
     }else if(a->orientation == 4)
     {
-        if(a->robot_x - 0 < 0.1)
+        if(a->robot_x - min_x < 0.1)
         {
-            a->robot_x = 0;
+            a->robot_x = min_x;
             return -1;
         }
         else if (unit_array[int_y][int_x] == -1)
         {
             a->robot_x = int_x + 1;
+            a->is_obstacle = 1;
             return -1;       
         }
     }
@@ -228,6 +236,31 @@ int canMoveForward(struct robot *a)
     return 1;
 }
 
+void memory_control(struct robot *a)
+{
+    int int_x;
+    int_x = (int)a->robot_x;
+    if( (a->Memory_System == 1) &&(a->clash_time > 1)&&(int_x == min_x || int_x == max_x) && (a->orientation == 1 || a->orientation == 3))
+    {
+        distance_count = distance_count + 0.1;
+        if( (distance_count - (max_y + 1) < -0.5) && (int_x == min_x) )
+        {
+            min_x = min_x + 1;
+            
+        }else if( (distance_count - (max_y + 1) < -0.5) && (int_x == max_x) )
+        {
+            max_x = max_x - 1;
+        }
+    }else if(a->Memory_System == 0)
+    {
+        max_x = tmp_max_x;
+        min_x = 0;
+
+    }
+
+
+
+}
 
 //Integrate these functions
 int setup_robot(struct robot *a)
@@ -239,37 +272,49 @@ int setup_robot(struct robot *a)
     a->orientation = robot_start_orientation;
     a->stop = 0;
     a->carry = 0;
+    a->Memory_System = 1;
+    a->clash_time = 0;
+    a->is_obstacle = 0;
+
+
 
     //Use an index to exit the program in case of bugs
     int i = 0;
 
-
-
-    while(canMoveForward(a) == 1 && i < 500 && a->stop == 0)
+    //Write the algorithm here
+    while(i<2000 && a->stop == 0)
     {
-        //This is when you start drawing a robot
-        forward(a);
-        sleep(25);
-        i = i + 1;
-        //If you can not move forward, try turn right or left
-        if (canMoveForward(a) == -1)
+        if(canMoveForward(a) == 1)
         {
-            left(a);
+            forward(a);
+            memory_control(a);
+            sleep(10);
         }
+        else if (canMoveForward(a) == -1 && a->is_obstacle == 0)
+        {
+            a->clash_time = a->clash_time + 1; 
+            right(a);
 
-        //If you are on a marker, pick it up and reset the value to be 0
+        }
         if(atMarker(a) == 1)
         {
             pickUpMarker(a);
+            a->Memory_System = 0;
+            memory_control(a);
         }
-
-        //If you are carrying something, do dropMarker()
         if(a->carry > 0)
         {
-            drpoMarker(a);//Takes place when robot at corner
+            drpoMarker(a);
         }
+
+        i = i + 1;
+
+
+
+
+
     }
-    return 1;
+
 }
 
 int main(void)

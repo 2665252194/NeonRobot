@@ -41,7 +41,7 @@ void Create_arena ()
         //horizontal lines
         drawLine(outer_x, outer_y, outer_x + inside_width, outer_y);
         outer_y = outer_y + unit_size;
-        for(j; j<=max_x+1; j++)
+        for(j; j<=tmp_max_x+1; j++)
         {
             //vertical lines
             drawLine(inner_x, inner_y, inner_x, inner_y + inside_height);
