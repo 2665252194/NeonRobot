@@ -14,4 +14,4 @@ How to go through obstacle?: Initially Robot is always trying to turn right, but
 Files included:
 robot.c: The most important file where integrated all functions.
 robot_background.c /.h : Store and define the functions to write arena and items
-robot_data.c /.j :Store all the necessary data and a function to initiliaze the random data.
+robot_data.c /.h :Store all the necessary data and a function to initiliaze the random data.
