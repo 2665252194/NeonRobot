@@ -54,6 +54,8 @@ int unit_array[32][32] = {0};
 //position of the marker
 int marker_x;
 int marker_y;
+int marker_x_2;
+int marker_y_2;
 
 //position of obstacle
 int obs_x;
@@ -66,17 +68,17 @@ int robot_start_x;
 int robot_start_y;
 int robot_start_orientation;
 
+//Used in the memory algorithm
 int distance_count;
 
+
+//Used in the memory algorithm
 int min_x;
 int min_y;
 int tmp_max_x;
 int tmp_max_y;
 int tmp_changing_min_x;
 int tmp_changing_max_x;
-
-int marker_x_2;
-int marker_y_2;
 
 
 void initialize_arena_dimensions() {
@@ -97,6 +99,7 @@ void initialize_arena_dimensions() {
     tmp_max_x = max_x;
     tmp_max_y = max_y;
     
+    //min value should be 0 initially
     min_x = 0;
     min_y = 0;
 
@@ -123,6 +126,9 @@ void initialize_arena_dimensions() {
         //If some of them overlapped then do it again
     } while ((marker_x == obs_x && marker_y ==obs_y) || (marker_x == robot_start_x && marker_y == robot_start_y) || (robot_start_x == obs_x && robot_start_y ==obs_y) || (obs_x_2 == obs_x));
 
+
+
+    //Used in memory algorithm
     distance_count = 0;
     tmp_changing_max_x = max_x;
     tmp_changing_min_x = min_x;

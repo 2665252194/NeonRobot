@@ -2,8 +2,7 @@
 #define ROBOT_DATA_H
 
 
-//Why would you come here?
-//Go to that c file please
+//Provide the functions and data
 
 int random_num(int min, int max);
 void initialize_arena_dimensions();
