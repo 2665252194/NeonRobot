@@ -58,18 +58,25 @@ int marker_y;
 //position of obstacle
 int obs_x;
 int obs_y;
+int obs_x_2;
+int obs_y_2;
 
 //Set up the robot
 int robot_start_x;
 int robot_start_y;
 int robot_start_orientation;
 
-float distance_count;
+int distance_count;
 
 int min_x;
 int min_y;
 int tmp_max_x;
+int tmp_max_y;
+int tmp_changing_min_x;
+int tmp_changing_max_x;
 
+int marker_x_2;
+int marker_y_2;
 
 
 void initialize_arena_dimensions() {
@@ -88,10 +95,10 @@ void initialize_arena_dimensions() {
     max_x = ((arena_width - 2*unit_size) / unit_size) - 1;//Remember taking 0 into account so minus 1
     max_y = ((arena_height - 2*unit_size) / unit_size) - 1;
     tmp_max_x = max_x;
+    tmp_max_y = max_y;
     
     min_x = 0;
     min_y = 0;
-
 
 
 
@@ -102,15 +109,21 @@ void initialize_arena_dimensions() {
         {
             marker_x = random_num(0,max_x - 1);
             marker_y = random_num(0,max_y - 1);
+            marker_x_2 = random_num(0,max_x - 1);
+            marker_y_2 = random_num(0,max_y - 1);
             //Can not be at corner
-        } while ( (marker_x == 0 && marker_y == 0) || (marker_x == 0 && marker_y == max_y) || (marker_x == max_x && marker_y == max_y || (marker_x == max_x && marker_y == 0)) );
-        obs_x = random_num(0,max_x);
-        obs_y = random_num(0,max_y);
+        } while ( (marker_x == 0 && marker_y == 0) || (marker_x == 0 && marker_y == max_y) || (marker_x == max_x && marker_y == max_y || (marker_x == max_x && marker_y == 0)) || (marker_x == marker_x_2));
+        obs_x = random_num(1,max_x);
+        obs_y = random_num(1,max_y);
+        obs_x_2 = random_num(1,max_x);
+        obs_y_2 = random_num(1,max_y);
         robot_start_x = random_num(2,max_x-2);
         robot_start_y = random_num(2,max_y-2);
         robot_start_orientation = random_num(1,4);
         //If some of them overlapped then do it again
-    } while ((marker_x == obs_x && marker_y ==obs_y) || (marker_x == robot_start_x && marker_y == robot_start_y) || (robot_start_x == obs_x && robot_start_y ==obs_y));
+    } while ((marker_x == obs_x && marker_y ==obs_y) || (marker_x == robot_start_x && marker_y == robot_start_y) || (robot_start_x == obs_x && robot_start_y ==obs_y) || (obs_x_2 == obs_x));
 
     distance_count = 0;
+    tmp_changing_max_x = max_x;
+    tmp_changing_min_x = min_x;
 }

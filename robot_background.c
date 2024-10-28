@@ -85,6 +85,6 @@ void draw_item(int x, int y, int item_type)
     {
         setRGBColour(148, 0 ,211);
         fillRect(real_x, real_y, unit_size, unit_size);
-        //Don't need set any value
+        unit_array[y][x] = 3;
     }
 }

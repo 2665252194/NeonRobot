@@ -24,6 +24,9 @@ extern int max_y;
 extern int min_x;
 extern int min_y;
 extern int tmp_max_x;
+extern int tmp_max_y;
+extern int tmp_changing_min_x;
+extern int tmp_changing_max_x;
 
 
 
@@ -38,12 +41,16 @@ extern int unit_array[32][32];
 
 extern int marker_x;
 extern int marker_y;
+extern int marker_x_2;
+extern int marker_y_2;
 extern int obs_x;
 extern int obs_y;
+extern int obs_x_2;
+extern int obs_y_2;
 extern int robot_start_x;
 extern int robot_start_y;
 extern int robot_start_orientation;
 
-extern float distance_count;
+extern int distance_count;
 
 #endif
