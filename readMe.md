@@ -6,7 +6,7 @@ To compile: gcc -o robot.exe robot.c graphics.c robot_background.c robot_data.c
 
 To run: ./robot.exe | java -jar drawapp-4.0.jar
 
-## Introduction:
+# Introduction:
 
     The robot starts at random position and random orientation in an arena of rectangular shape with random width and height filled with mutiple markers and obstacles.
 
@@ -18,7 +18,7 @@ To run: ./robot.exe | java -jar drawapp-4.0.jar
 
     *Robot try to turn right in default.
 
-## Files Included:
+# Files Included:
 
     Robot.c: This is where the main function takes place. This file includes all the other header file and defines the functions that implents the robot. 
 
@@ -32,7 +32,7 @@ To run: ./robot.exe | java -jar drawapp-4.0.jar
 
     jpg files: Used to be displayed in the program
 
-## Features:
+# Features:
 
     Memory System: Keep narrowing the arena(in a virtual way) until robot finds the marker
 
