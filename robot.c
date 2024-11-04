@@ -64,8 +64,9 @@ void forward(struct robot *a)
     //Draw the robot
     foreground();
     clear();
-    setColour(green);
-    fillRect(O_x + unit_size * (a->robot_x) ,O_y + unit_size * (a->robot_y) ,40 ,40);
+    //setColour(green);
+    //fillRect(O_x + unit_size * (a->robot_x) ,O_y + unit_size * (a->robot_y) ,40 ,40);
+    displayImage("neon_rb.jpg",O_x + unit_size * (a->robot_x) , O_y + unit_size * (a->robot_y));
 
     //If robot is carrying something, draw a sign on his body
     if(a->carry > 0)
@@ -342,7 +343,7 @@ int setup_robot(struct robot *a)
             //go forward
             memory_control(a);
             forward(a);
-            sleep(50);
+            sleep(70);
 
             //If robot find an obstacle, keep turning left until it can do so
             if(a->is_obstacle == 1)

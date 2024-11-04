@@ -13,14 +13,16 @@ void Create_arena ()
 {
     //Fill the Background with black colour
     background();
-    setColour(black);
-    fillRect(0,0,width,height);
+    //setColour(black);
+    displayImage("neon_bg.jpg", 0,0);
 
 
     //Pink
     setRGBColour(255,20,147);
     // Create a big rectangle
     fillRect(arena_start_x,arena_start_y,arena_width,arena_height);
+    setColour(black);
+    drawRect(arena_start_x-1,arena_start_y-1,arena_width,arena_height); //Just a stroke!
     //Then create a black small rectangle inside the big one
     setColour(black);
     fillRect(arena_start_x + unit_size, arena_start_y + unit_size, inside_width, inside_height);

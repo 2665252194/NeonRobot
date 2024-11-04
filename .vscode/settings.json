@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "abstraction.h": "c",
+        "graphics.h": "c"
+    }
+}
