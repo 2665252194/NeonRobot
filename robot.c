@@ -33,6 +33,16 @@ struct robot
 
 };
 
+int markerCount(struct robot *a)
+{
+    if(a->carry>0)
+    {
+        return a->carry;
+    }
+    else{
+        return 0;
+    }
+}
 
 
 //Function used to draw robot and move forward
