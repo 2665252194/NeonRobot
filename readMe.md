@@ -4,6 +4,8 @@ A simple robot that can find the marker in an arena.
 
 Stops when getting all markers to Home.
 
+![alt text](image-1.png)
+
 ## Compile And Run
 To compile:
 
