@@ -27,9 +27,6 @@ struct robot
     int robot_y;
     int carry;//Return the number of markers the robot is carrying
     int stop;//Whether the game is over
-    int Memory_System;//Whether the robot should have memory
-    int clash_time;//I will explain this later in the algorithm
-    int is_obstacle;//Whether meeting an obstacle
 
 };
 
@@ -45,7 +42,6 @@ int markerCount(struct robot *a)
 }
 
 
-//Function used to draw robot and move forward
 void forward(struct robot *a)
 {
     if(a->orientation == 1)
@@ -69,25 +65,10 @@ void forward(struct robot *a)
     {
         printf("Where's your orientation?\n");
     }
-
-
-    //Draw the robot
-    foreground();
-    clear();
-    //setColour(green);
-    //fillRect(O_x + unit_size * (a->robot_x) ,O_y + unit_size * (a->robot_y) ,40 ,40);
-    displayImage("neon_rb.jpg",O_x + unit_size * (a->robot_x) , O_y + unit_size * (a->robot_y));
-
-    //If robot is carrying something, draw a sign on his body
-    if(a->carry > 0)
-    {
-        setRGBColour(148,0,211);
-        fillRect(O_x + unit_size * (a->robot_x) + 10,O_y + unit_size * (a->robot_y) + 10, 10, 10);
-
-    }
 }
 
-//Let us make the left function
+
+//Make the left function
 void left(struct robot *a)
 {
     if(a->orientation == 1)
@@ -132,7 +113,7 @@ void right(struct robot *a)
 //Check whether it is in a marker
 int atMarker(struct robot *a)
 {
-    if(unit_array[a->robot_y][a->robot_x] == 1)//Remeber swapping x and y because it is rom and column for 2D array!!
+    if(unit_array[a->robot_y][a->robot_x] == -1)
     {
         return 1;
     }
@@ -145,53 +126,36 @@ int atMarker(struct robot *a)
 
 void pickUpMarker(struct robot *a)
 {
-    //First set it back to 0
+    //set to zero
     unit_array[a->robot_y][a->robot_x] = 0;
-
-    //You are going to find a corner so you don't really need memory anymore
-    a->Memory_System = 0;
 
     //carry should plus one
     a->carry = a->carry + 1;
+    unit_array[robot_start_y][robot_start_x] = 0;
 
     //Redraw the arena
     Create_arena();
+    shape();
 
     //Redraw the markers left
-    if(unit_array[marker_y][marker_x] == 1)
+    if(unit_array[marker_y][marker_x] == -1)
     {
         draw_item(marker_x, marker_y, 1);
     }
 
-    if(unit_array[marker_y_2][marker_x_2] == 1)
+    if(unit_array[marker_y_2][marker_x_2] == -1)
     {
         draw_item(marker_x_2, marker_y_2, 1);
     }
 
-    if(unit_array[0][0] == 3)
-    {
-        draw_item(0,0, 3);
-    }
-
-    if(unit_array[0][tmp_max_x] == 3)
-    {
-        draw_item(tmp_max_x,0, 3);
-    }
-
-    if(unit_array[tmp_max_y][0] == 3)
-    {
-        draw_item(0,tmp_max_y, 3);
-    }
-
-    if(unit_array[tmp_max_y][tmp_max_x] == 3)
-    {
-        draw_item(tmp_max_x,tmp_max_y,3);
-    }
 
 
     //Redraw the obstacle
     draw_item(obs_x,obs_y,2);
     draw_item(obs_x_2,obs_y_2,2);
+
+    //Redraw the home
+    draw_item(robot_start_x, robot_start_y,4);
 
     
 }
@@ -199,23 +163,16 @@ void pickUpMarker(struct robot *a)
 
 void drpoMarker(struct robot *a)
 {
-    //Drop the marker at corner 
-    if((a->robot_x == 0 && a->robot_y == 0) || (a->robot_x == 0 && a->robot_y == max_y) || (a->robot_x == max_x && a->robot_y == 0) || (a->robot_x == max_x && a->robot_y == max_y))
+    //Drop the marker at home 
+    if(a->robot_x == robot_start_x && a->robot_y == robot_start_y)
     {
-        a->carry = a->carry - 1;
-        draw_item(a->robot_x, a->robot_y, 3);
-        marker_number = marker_number - 1;
+        marker_number = marker_number - a->carry;
+        a->carry = 0;
 
         //If there is no marker left, game is over
         if(marker_number <= 0)
         {
             a->stop = 1;
-        }
-        else
-        {
-            //If there is marker left, turn on the memory and keep going
-            a->Memory_System = 1;
-            a->clash_time = 0;
         }
     }
     
@@ -233,11 +190,8 @@ int canMoveForward(struct robot *a)
             return -1;
         }
         //Second case, it is a obstacle
-        else if (unit_array[a->robot_y - 1][a->robot_x] == -1)//Remeber swapping x and y because it is rom and column for 2D array!!
+        else if (unit_array[a->robot_y - 1][a->robot_x] == 100000)
         {
-
-            //If that is an obstacle, let me know
-            a->is_obstacle = 1;
             return -1;
         }
     }else if(a->orientation == 2)//East
@@ -247,9 +201,8 @@ int canMoveForward(struct robot *a)
         {
             return -1;
         }
-        else if (unit_array[a->robot_y][a->robot_x + 1] == -1)//Remeber swapping x and y because it is rom and column for 2D array!!
-        {   
-            a->is_obstacle = 1;
+        else if (unit_array[a->robot_y][a->robot_x + 1] == 100000)//Remeber swapping x and y because it is rom and column for 2D array!!
+        {
             return -1;
         }
     }else if(a->orientation == 3)
@@ -258,9 +211,8 @@ int canMoveForward(struct robot *a)
         {
             return -1;
         }
-        else if (unit_array[a->robot_y+1][a->robot_x] == -1)
+        else if (unit_array[a->robot_y+1][a->robot_x] == 100000)
         {
-            a->is_obstacle = 1;
             return -1;
         }   
     }else if(a->orientation == 4)
@@ -269,9 +221,8 @@ int canMoveForward(struct robot *a)
         {
             return -1;
         }
-        else if (unit_array[a->robot_y][a->robot_x - 1] == -1)
+        else if (unit_array[a->robot_y][a->robot_x - 1] == 100000)
         {
-            a->is_obstacle = 1;
             return -1;       
         }
     }
@@ -284,41 +235,83 @@ int canMoveForward(struct robot *a)
 
 
 
-//This function control the memory
+//My Algoritm
 void memory_control(struct robot *a)
 {
-    if( (a->is_obstacle == 0)&&(a->Memory_System == 1) && (a->clash_time > 1) &&(a->robot_x == min_x || a->robot_x == max_x))
-    {
-        distance_count = distance_count + 1;
+    //Add 1 when passing this filt
+    unit_array[a->robot_y][a->robot_x] += 1;
+    int lowest = 100;
+    int best_orientation = 0;
+    int tmp_x = a->robot_x;
+    int tmp_y = a->robot_y;
 
-        //If the robot successfully goes through min_x or max_x, we can narrow the max_x and min_x
-        //Keep narrowing the edge and one day the robot will find the marker
-        if( (distance_count >= (max_y) && (a->robot_x == min_x) ))
-        {
-            min_x = min_x + 1;
-            tmp_changing_min_x = min_x;
-            distance_count = 0;
-            
-        }else if( (distance_count >= (max_y)) && (a->robot_x == max_x) )
-        {
-            max_x = max_x - 1;
-            tmp_changing_max_x = max_x;
-            distance_count = 0;
+    //Try to find the orientation where the score is lowest
+    if(canMoveForward(a) == 1){
+        forward(a);
+        if(unit_array[a->robot_y][a->robot_x] < lowest){
+            lowest = unit_array[a->robot_y][a->robot_x];
+            best_orientation = a->orientation;
         }
-    
-    //If I turned off the memory, the min_x and max_x should reset to the default
-    //So that the robot can find the corner
-    }else if(a->Memory_System == 0)
-    {
-        max_x = tmp_max_x;
-        min_x = 0;
-
-
-        tmp_changing_max_x = max_x;
-        tmp_changing_min_x = min_x;
+        a->robot_x = tmp_x;
+        a->robot_y = tmp_y;
     }
-}
 
+    //Turn right and try again
+    right(a);
+    if(canMoveForward(a) == 1)
+    {
+
+        forward(a);
+
+        if(unit_array[a->robot_y][a->robot_x] < lowest)
+        {
+            lowest = unit_array[a->robot_y][a->robot_x];
+            best_orientation = a->orientation;
+        }
+
+        a->robot_x = tmp_x;
+        a->robot_y = tmp_y;
+
+        left(a);
+    }else
+    {   //If can not move there just turn left directly
+        left(a);
+    }
+
+    //Turn left and try again
+    left(a);
+    if(canMoveForward(a) == 1)
+    {
+
+        forward(a);
+
+        if(unit_array[a->robot_y][a->robot_x] < lowest)
+        {
+            lowest = unit_array[a->robot_y][a->robot_x];
+            best_orientation = a->orientation;
+        }
+
+        a->robot_x = tmp_x;
+        a->robot_y = tmp_y;
+        right(a);
+
+
+    }else
+    {
+        right(a);
+    }
+
+    //If we go through 3 cases and nothing happening, that means we are stuck, now get out
+    if(best_orientation == 0)
+    {
+        right(a);
+        right(a);
+    }else{
+        //If something happening, we can move forward
+        a->orientation = best_orientation;
+    }
+
+}
 
 
 //Integrate these functions
@@ -331,92 +324,13 @@ int setup_robot(struct robot *a)
     a->orientation = robot_start_orientation;
     a->stop = 0;
     a->carry = 0;
-    a->Memory_System = 1;
-    a->clash_time = 0;
-    a->is_obstacle = 0;
 
-
-
-    //i stands for running time
-    //j stands for the time of stuck
-    //if j is over a value we can confirm the robot is stuck
     int i = 0;
-    int j = 0;
-    int stuck = 0;
 
 
     //Go robot!
     while(i<600 && a->stop == 0)
     {
-        if(canMoveForward(a) == 1)
-        {
-            //go forward
-            memory_control(a);
-            forward(a);
-            sleep(70);
-
-            //If robot find an obstacle, keep turning left until it can do so
-            if(a->is_obstacle == 1)
-            {
-
-                //Change the edge temporialy avoiding stuck 
-                if(a->orientation == 1)
-                {
-                    max_x = a->robot_x + 2;
-                }
-                else if(a->orientation == 3)
-                {
-                    min_x = a->robot_x - 2;
-                }
-
-
-                //Try turn left
-                left(a);
-
-                //If can not turn left, that's fine we turn back
-                if(canMoveForward(a) == -1)
-                {
-                    right(a);
-
-                    //If still can not move, robot has crossed the obstacle
-                    if((canMoveForward(a) == -1) || stuck == 1)
-                    {
-                        //j can be 0
-                        j = 0;
-                        //No more obstacle then
-                        a->is_obstacle = 0;
-                        //distance_count should plus 2
-                        distance_count = distance_count + 2;
-                        //Set back the edge
-                        max_x = tmp_changing_max_x;
-                        min_x = tmp_changing_min_x;
-                        stuck = 0;
-                    }
-                    else
-                    {
-                        //If can move, the robot is going like a cycle around the obstacle
-                        j = j + 1;
-                    }
-                }
-                //If robot has done a whole cycle, definitely stuck then
-                if(j>4)
-                {
-                    stuck = 1;
-                }
-            }
-        }
-        else//If it is only a wall
-        {
-            //And make sure is_obstacle is 0
-            if(a->is_obstacle == 0)
-            {
-                //We plus the clash_time
-                //If clash_time > 2, the robot is definitely at min_x or max_x
-                a->clash_time = a->clash_time + 1;
-            }
-
-            right(a);//Then turn right
-        }
         if(atMarker(a) == 1)
         {
             pickUpMarker(a);
@@ -426,19 +340,34 @@ int setup_robot(struct robot *a)
             drpoMarker(a);
         }
 
+
+
+        memory_control(a);
+        forward(a);
+        sleep(20);
+
+
+
+        //Draw the robot
+        foreground();
+        clear();
+        displayImage("neon_rb.jpg",O_x + unit_size * (a->robot_x) , O_y + unit_size * (a->robot_y));
+
+        //If robot is carrying something, draw a sign on his body
+        if(a->carry > 0)
+        {
+            setRGBColour(148,0,211);
+            fillRect(O_x + unit_size * (a->robot_x) + 10,O_y + unit_size * (a->robot_y) + 10, 10, 10);
+
+        }
         i = i + 1;
-
-
-
-
-
     }
 
 }
 
 int main(void)
 {
-    //initialize the data
+    //initialize the arena
     initialize_arena_dimensions();
 
     //Then set the window size
@@ -446,12 +375,16 @@ int main(void)
 
     //Create the arena
     Create_arena();
+    shape();
+    //Initiliaze the data of item(robot and markers...)
+    initialize_item();
 
     //Draw the item
     draw_item(marker_x, marker_y,1);
     draw_item(marker_x_2, marker_y_2,1);
     draw_item(obs_x,obs_y,2);
     draw_item(obs_x_2,obs_y_2,2);
+    draw_item(robot_start_x, robot_start_y,4);
 
     //Declare a robot
     struct robot *Robot;
@@ -461,4 +394,5 @@ int main(void)
     setup_robot(Robot);
 
     return 0;
+
 }

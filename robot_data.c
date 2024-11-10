@@ -39,6 +39,8 @@ int O_y;
 //max_x and max_y is the maximum number of fillets in column and row 
 int max_x;
 int max_y;
+int min_x;
+int min_y;
 
 //The size inside the arena rather than the wall
 int inside_width;
@@ -68,26 +70,13 @@ int robot_start_x;
 int robot_start_y;
 int robot_start_orientation;
 
-//Used in the memory algorithm
-int distance_count;
-
-
-//Used in the memory algorithm
-int min_x;
-int min_y;
-int tmp_max_x;
-int tmp_max_y;
-int tmp_changing_min_x;
-int tmp_changing_max_x;
-
-
 void initialize_arena_dimensions() {
     //srand the time()
     srand(time(0));
 
     //Some Simple mathematics
-    arena_width = 40* random_num(10,20);
-    arena_height = 40* random_num(10,20);
+    arena_width = 40* random_num(15,20);
+    arena_height = 40* random_num(15,20);
     arena_start_x = (width - arena_width) / 2;
     arena_start_y = (height - arena_height) / 2;
     O_x = arena_start_x + unit_size;
@@ -96,26 +85,26 @@ void initialize_arena_dimensions() {
     inside_height = arena_height - unit_size * 2;
     max_x = ((arena_width - 2*unit_size) / unit_size) - 1;//Remember taking 0 into account so minus 1
     max_y = ((arena_height - 2*unit_size) / unit_size) - 1;
-    tmp_max_x = max_x;
-    tmp_max_y = max_y;
     
     //min value should be 0 initially
     min_x = 0;
     min_y = 0;
 
+}
 
 
+
+
+
+void initialize_item()
+{
     //Generate random number
     do
     {
-        do
-        {
-            marker_x = random_num(0,max_x - 1);
-            marker_y = random_num(0,max_y - 1);
-            marker_x_2 = random_num(0,max_x - 1);
-            marker_y_2 = random_num(0,max_y - 1);
-            //Can not be at corner
-        } while ( (marker_x == 0 && marker_y == 0) || (marker_x == 0 && marker_y == max_y) || (marker_x == max_x && marker_y == max_y || (marker_x == max_x && marker_y == 0)) || (marker_x == marker_x_2));
+        marker_x = random_num(0,max_x - 1);
+        marker_y = random_num(0,max_y - 1);
+        marker_x_2 = random_num(0,max_x - 1);
+        marker_y_2 = random_num(0,max_y - 1);
         obs_x = random_num(1,max_x);
         obs_y = random_num(1,max_y);
         obs_x_2 = random_num(1,max_x);
@@ -124,12 +113,17 @@ void initialize_arena_dimensions() {
         robot_start_y = random_num(2,max_y-2);
         robot_start_orientation = random_num(1,4);
         //If some of them overlapped then do it again
-    } while ((marker_x == obs_x && marker_y ==obs_y) || (marker_x == robot_start_x && marker_y == robot_start_y) || (robot_start_x == obs_x && robot_start_y ==obs_y) || (obs_x_2 == obs_x));
+    }while(
+        (marker_x == marker_x_2 && marker_y == marker_y_2) ||
+        (obs_x == obs_x_2 && obs_y == obs_y_2) ||
+        (marker_y == obs_y && marker_x == obs_x) ||
+        (robot_start_x == marker_x && robot_start_y == marker_y) ||
+        (robot_start_x == obs_x && robot_start_x == obs_y) ||
+        (unit_array[marker_y][marker_x] > 10000) ||
+        (unit_array[marker_y_2][marker_x_2] > 10000) ||
+        (unit_array[obs_y][obs_x] > 10000) ||
+        (unit_array[obs_y_2][obs_x_2] > 10000) ||
+        (unit_array[robot_start_y][robot_start_x] > 10000)
+    );
 
-
-
-    //Used in memory algorithm
-    distance_count = 0;
-    tmp_changing_max_x = max_x;
-    tmp_changing_min_x = min_x;
 }

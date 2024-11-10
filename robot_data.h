@@ -6,6 +6,7 @@
 
 int random_num(int min, int max);
 void initialize_arena_dimensions();
+void initialize_item();
 
 
 extern const int width;
@@ -22,10 +23,6 @@ extern int max_x;
 extern int max_y;
 extern int min_x;
 extern int min_y;
-extern int tmp_max_x;
-extern int tmp_max_y;
-extern int tmp_changing_min_x;
-extern int tmp_changing_max_x;
 
 
 

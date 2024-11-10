@@ -38,12 +38,12 @@ void Create_arena ()
     int inner_y = O_y;
     int outer_x = O_x;
     int outer_y = O_y;
-    for (i; i<=max_y+1; i++)
+    for (i; i<=max_y; i++)
     {
         //horizontal lines
         drawLine(outer_x, outer_y, outer_x + inside_width, outer_y);
         outer_y = outer_y + unit_size;
-        for(j; j<=tmp_max_x+1; j++)
+        for(j; j<=max_x; j++)
         {
             //vertical lines
             drawLine(inner_x, inner_y, inner_x, inner_y + inside_height);
@@ -70,8 +70,8 @@ void draw_item(int x, int y, int item_type)
         //Fill that fillet
         fillRect(real_x, real_y, unit_size, unit_size);
 
-        //Set the value to be 1 meanning there is a marker
-        unit_array[y][x] = 1;
+        //Set the value to be -1 meanning there is a marker
+        unit_array[y][x] = -1;
     }
     else if (item_type == 2)//obstruction
     {
@@ -79,14 +79,47 @@ void draw_item(int x, int y, int item_type)
         setRGBColour(255,165,0);
         fillRect(real_x, real_y, unit_size, unit_size);
 
-        //Set the value to be -1 meaning there is a obstacle
-        unit_array[y][x] = -1;
+        //Set the value to be 100000 meaning there is a obstacle or wall
+        unit_array[y][x] = 100000;
    
     }
-    else if (item_type == 3)//The markers which are dropped by the robot
+    else if (item_type == 3)//Wall
     {
-        setRGBColour(148, 0 ,211);
+        //Pink
+        setRGBColour(255,20,147);
         fillRect(real_x, real_y, unit_size, unit_size);
-        unit_array[y][x] = 3;
+        unit_array[y][x] = 100000;
+   
+    }
+    else if (item_type == 4)//Home
+    {
+        //Green
+        setColour(green);
+        fillRect(real_x, real_y, unit_size, unit_size);
+        unit_array[y][x] = 0;
+   
+    }
+}
+
+
+void shape(void)
+{
+
+    //Draw the shape of the arena
+    for(int i=0; i<max_x+1; i++)
+    {
+        draw_item(i,max_y,3);
+    }
+    for(int i=2; i<max_x-1; i++)
+    {
+        draw_item(i,max_y-1,3);
+        draw_item(i,max_y-2,3);
+        draw_item(i,max_y-3,3);
+    }
+    for(int i=4; i<max_x-3; i++)
+    {
+        draw_item(i,max_y-4,3);
+        draw_item(i,max_y-5,3);
+        draw_item(i,max_y-6,3);
     }
 }

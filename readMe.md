@@ -1,51 +1,47 @@
 # COMP0002 Coursework Desgined by Zhouzhou Zhang, Nov 2024
-A simple robot that can find the marker in an arena
 
-## Compile and Run
-To compile: gcc -o robot.exe robot.c graphics.c robot_background.c robot_data.c
+A simple robot that can find the marker in an arena.
 
-To run: ./robot.exe | java -jar drawapp-4.0.jar
+Stops when getting all markers to Home.
 
-### Introduction:
+## Compile And Run
+To compile:
 
-    The robot starts at random position and random orientation in an arena of rectangular shape with random width and height filled with mutiple markers and obstacles.
+    gcc -o robot.exe robot.c graphics.c robot_background.c robot_data.c
 
-    The program is now at stage 5 where the robot will seek for markers and take them to corner and end the game.
+To run:
 
-![alt text](image.png)
+    ./robot.exe | java -jar drawapp-4.0.jar
 
-    *Pink arena, green robot, yellow obstacle and purple markers.
+Command may should be changed depending on your platform
 
-    *Robot try to turn right in default.
+## Feature
+At stage 7.
 
-### Files Included:
+Random size and shape of arena.
 
-    - Robot.c: This is where the main function takes place. This file includes all the other header file and defines the functions that implents the robot. 
+Find the markers and take them back to Home(a random filet).
 
-    - robot_backgrouond: Provides the function used to draw the arena and objects(markers and obstacles).
-                        
-                       Functions are also defind in the header file.
+Robot at random position and orientation.
 
-    - robot_data: Provides external variables and functions used to initiliaze the data.
+Detailed Comments
 
-                Data can be modified in this file and also defined in the hearder file.
+## Algorithm
 
-    - jpg files: Used to be displayed in the program
+Based on a Score-System.
 
-### Features:
+Whenever passing one filet, increase the score of this filet.
 
-    - Memory System: Keep narrowing the arena(in a virtual way) until robot finds the marker
+Chooses lower score to go.
 
-                     For instance, initially the minimum x is 0, when robots iterated x = 0, let minimum x to be 1...
+The score of obstacle is 100000 so robot will never go there.
 
-    - Pass obstacles: Try turn to the obstacle until arriving at the behind of obstacles
+## File included
 
-    - Stuck avoiding: Robot will ignore the obstacle and choose other way if finding himself stuck in an obstacle
+robot.c: Implements the functions about robot
 
-    - Random generator: Based on the system time
+robot_background.c: Implements the functions about the background
 
-    - Array: Uses a 32*32 2D Array where we use as much as we need, as the array is not in the free store.
+robot_data.c: Implements some method used to initiliaze the data.
 
-    - UI Desgin: Uses Neon Wave style.
-
-
+header files: They are not external libraries. They are all implemented by my .c file.
